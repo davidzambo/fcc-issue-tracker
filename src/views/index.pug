@@ -69,8 +69,10 @@ block content
 
     if (result)
         div.row.px-md-4
-            p.col-12
-                code #{JSON.stringify(result)}
+            div.col-12
+                h3 API response:
+                p
+                    code #{JSON.stringify(result)}
 block footer
     footer.row.bg-dark.text-white.p-3.mt-4
         a.col-12(href="https://www.dcmf.hu/" target="_blank") codedBy
