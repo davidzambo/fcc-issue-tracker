@@ -44,7 +44,7 @@ export class IssueController {
                 /*
                 * Send back the last inserted issue
                 */
-                return res.render("index", {result: project.issues[project.issues.length - 1]});
+                return res.json({issue: project.issues[project.issues.length - 1]});
             });
         });
     }
