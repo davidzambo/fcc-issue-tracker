@@ -56,60 +56,106 @@ export class IssueController {
     }
 
     public static update(req: express.Request, res: express.Response) {
-        try {
-            /*
-            * Check validation of given _id
-            * */
-            const _id = new mongoose.Types.ObjectId(req.body._id);
-            /*
-            * Check new data if they have any values
-            * */
-            let hasSomethingToUpdate = false;
-            for (let key in req.body) {
-                if (key !== "_id" && req.body[key] !== "") {
-                    hasSomethingToUpdate = true;
-                    break;
-                }
-            }
+        /*
+        * Handle missing _id
+        * */
+        if (!req.body._id) return res.json({message: "could not update"});
 
-            if (!hasSomethingToUpdate) {
-                return res.json({
-                    message: "No updated field sent!"
-                })
-            }
+        /*
+        * Handle invalid _id
+        * */
+        try {
+            const _id = new mongoose.Types.ObjectId(req.body._id);
+
             /*
             * Find the given project
             * */
-            Project.findOneAndUpdate({
+            Project.findOne({
                     project_name: req.params.projectname,
                     "issues._id": _id
-                },
-                {"$set": {
-                        "issues.$": req.body
-                    }}, (err: any, project: any) => {
-                    if (err) return res.json({
-                        message: "Something went wrong!",
-                        error: err
-                    });
+                }, (err, project: any) => {
+                    if (err) return res.json({message: `could not update ${req.body._id}`});
+                    if (!project) return res.json({message: `could not update ${req.body._id}`});
 
                     /*
-                    * Handle "no project" case
+                    * Check new data if they have any values
                     * */
-                    if (!project) return res.json({
-                        message: "Unknown project!"
+                    let hasSomethingToUpdate = false;
+                    for (let key in req.body) {
+                        if (key !== "_id" && req.body[key] !== "") {
+                            hasSomethingToUpdate = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasSomethingToUpdate) {
+                        return res.json({
+                            message: "no updated field sent"
+                        })
+                    }
+
+                    const issue = project.issues.id(_id);
+                    const {issue_title,
+                        issue_text,
+                        created_by,
+                        assigned_to,
+                        status_text,
+                        open} = req.body;
+
+                    if (issue_title) issue.issue_title = issue_title;
+                    if (issue_text) issue.issue_text = issue_text;
+                    if (created_by) issue.created_by = created_by;
+                    if (assigned_to) issue.assigned_to = assigned_to;
+                    if (status_text) issue.status_text = status_text;
+                    if (open) issue.open = open;
+                    issue.updated_on = new Date().toJSON();
+
+
+                    project.save((err: any) => {
+                        if (err) return res.json({message: `could not update ${req.body._id}`});
+                        return res.json({
+                            message: "successfully updated"
+                        });
                     });
-
-                });
+            });
         } catch (error) {
-            return res.json({
-                message: "Whoops! Something went wrong!",
-                error: error.message
-            })
+            return res.json({message: "could not update"});
         }
-
     }
 
     public static destroy(req: express.Request, res: express.Response) {
+        /*
+        * Handle missing _id
+        * */
+        if (!req.body._id) return res.json({message: "_id error"});
 
+        /*
+        * Handle invalid _id*/
+        try {
+            const _id = new mongoose.Types.ObjectId(req.body._id);
+
+            Project.findOne({
+                project_name: req.params.projectname,
+                "issue.id": _id
+            }, (err, project: any) => {
+                /*
+                * Handle unexisting issue._id
+                * */
+                if (err || !project) return res.json({message: `could not delete ${req.body._id}`});
+
+                /*
+                * Delete issue
+                * Filter every issue which's _id is not the given _id
+                * */
+                project.issues = project.issues.filter((issue: any) => issue._id !== _id );
+
+                project.save((err: any) => {
+                   if (err) return res.json({message: `could not update ${_id}`});
+                   res.json({message: `deleted ${_id}`});
+                });
+            });
+        } catch (err) {
+            res.json({message: `could not delete ${req.body._id}`});
+        }
     }
 }
