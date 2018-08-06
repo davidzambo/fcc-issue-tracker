@@ -8,3 +8,19 @@ The object saved (and returned) will include all of those fields (blank for opti
   - I can DELETE /api/issues/{projectname} with a _id to completely delete an issue. If no _id is sent return '_id error', success: 'deleted '+_id, failed: 'could not delete '+_id.
   - I can GET /api/issues/{projectname} for an array of all issues on that specific project with all the information for each issue as was returned when posted.
 I can filter my get request by also passing along any field and value in the query(ie. /api/issues/{project}?open=false). I can pass along as many fields/values as I want.
+            /*
+            * Initialize db to have an issue to test with
+            * */
+            console.log("pre request");
+            let _id: any;
+            chai.request(server.app)
+                .post("/api/issues/apitest")
+                .send({
+                    created_by: "test",
+                    issue_title: "test",
+                    issue_text: "test"
+                })
+                .end((err: any, res: any) => {
+                    _id = res.body.issue._id;
+                });
+            console.log("post request");

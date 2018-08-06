@@ -1,14 +1,36 @@
+process.env.NODE_ENV = "test";
+
 import * as chai from "chai";
 import "mocha";
+import * as mongoose from "mongoose";
 import { Server } from "../src/server";
+import { projectSchema } from "../src/model/Project";
 
 chai.use(require("chai-http"));
 const expect = chai.expect;
 const assert = chai.assert;
 
+mongoose.connect(process.env.DB_ADDRESS, {useNewUrlParser: true});
+
+const Project = mongoose.model("Project", projectSchema);
+
 describe("IssueController test", () => {
+    before((done) => {
+        /*
+        * Empty issues
+        * */
+        Project.findOne({project_name: "apitest"}, (err: any, project: any) => {
+            project.issues = [];
+            project.save((err: any) => {
+                done();
+            });
+        });
+
+    });
+
     const server = new Server(4000);
     server.init();
+
 
     describe("POST /api/issues/", () => {
         describe(":projectname = willFindNoProject", () => {
@@ -202,22 +224,6 @@ describe("IssueController test", () => {
         });
 
         describe(":projectname = apitest", () => {
-            /*
-            * Initialize db to have an issue to test with
-            * */
-            console.log("pre request");
-            let _id: any;
-            chai.request(server.app)
-                .post("/api/issues/apitest")
-                .send({
-                    created_by: "test",
-                    issue_title: "test",
-                    issue_text: "test"
-                })
-                .end((err: any, res: any) => {
-                    _id = res.body.issue._id;
-                });
-            console.log("post request");
             it("fails to delete on empty _id", () => {
                 chai.request(server.app)
                     .del("/api/issues/apitest")
@@ -253,14 +259,25 @@ describe("IssueController test", () => {
             });
 
             it("delete issue with given _id", () => {
-                chai.request(server.app)
-                    .del("/api/issues/apitest")
-                    .send({_id})
-                    .end((err: any, res: any) => {
-                        expect(res).to.be.json;
-                        expect(res.body).to.have.property("message");
-                        assert.equal(res.body.message, `deleted ${_id}`);
+                Project.findOne({project_name: "apitest"}, (err: any, project: any) => {
+                    const newIssue = {
+                        created_by: "test",
+                        issue_title: "test",
+                        issue_text: "test"
+                    };
+                    project.issues.push(newIssue);
+                    project.save((err: any, project: any) => {
+                        const _id = project.issues[project.issues.length-1]._id;
+                        chai.request(server.app)
+                            .del("/api/issues/apitest")
+                            .send({_id})
+                            .end((err: any, res: any) => {
+                                expect(res).to.be.json;
+                                expect(res.body).to.have.property("message");
+                                assert.equal(res.body.message, `deleted ${_id}`);
+                            });
                     });
+                })
             });
         });
     });
