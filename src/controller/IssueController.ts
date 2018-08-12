@@ -20,7 +20,7 @@ switch (process.env.NODE_ENV) {
     default:
         DB_ADDRESS = process.env.DB_ADDRESS_DEV;
 }
-console.log(DB_ADDRESS);
+
 mongoose.connect(DB_ADDRESS, {useNewUrlParser: true});
 
 const Project = mongoose.model("Project", projectSchema);
@@ -75,7 +75,6 @@ export class IssueController {
                 /**
                  * Filter the result issues based on queries
                  */
-                console.log(req.query);
                 const issues = project.issues.filter((issue: any) => {
                     return (req.query.created_by ? issue.created_by === req.query.created_by : true) &&
                         (req.query.issue_title ? issue.issue_title === req.query.issue_title : true) &&
@@ -86,7 +85,7 @@ export class IssueController {
                         (req.query.created_on ? new Date(issue.created_on).valueOf() == new Date(req.query.created_on).valueOf() : true) &&
                         (req.query.updated_on ? new Date(issue.updated_on).valueOf() == new Date(req.query.updated_on).valueOf() : true);
                 });
-                return res.json({issues: issues});
+                return res.json({issues});
         })
     }
 

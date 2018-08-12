@@ -246,6 +246,18 @@ describe("IssueController test", () => {
                     });
             });
 
+            it("will list 1 issue with ?status_text=in progress&created_by=INIT test 1&issue_title=INIT test 1&issue_text=INIT test 1&assigned_to=anybody&open=false&created_on=2018-08-01T11:31:20&updated_at=2018-08-01T11:31:20", (done: any) => {
+                chai.request(server.app)
+                    .get("/api/issues/apitest?status_text=in progress&created_by=INIT test 1&issue_title=INIT test 1&issue_text=INIT test 1&assigned_to=anybody&open=false&created_on=2018-08-01T11:31:20&updated_at=2018-08-01T11:31:20")
+                    .end((err: any, res: any) => {
+                        expect(res).to.be.json;
+                        expect(res.body).to.have.property("issues");
+                        expect(res.body.issues).to.be.an("array");
+                        expect(res.body.issues).to.have.length(1);
+                        done();
+                    });
+            });
+
         });
     });
 
