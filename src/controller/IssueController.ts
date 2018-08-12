@@ -67,9 +67,27 @@ export class IssueController {
     }
 
     public static read(req: express.Request, res: express.Response) {
-        res.json({
-            message: "ok"
-        });
+        Project.findOne({
+            project_name: req.params.projectname,
+        })
+            .then((project: any) => {
+                if (!project) return res.json({message: "unknown project"});
+                /**
+                 * Filter the result issues based on queries
+                 */
+                console.log(req.query);
+                const issues = project.issues.filter((issue: any) => {
+                    return (req.query.created_by ? issue.created_by === req.query.created_by : true) &&
+                        (req.query.issue_title ? issue.issue_title === req.query.issue_title : true) &&
+                        (req.query.issue_text ? issue.issue_text === req.query.issue_text : true) &&
+                        (req.query.assigned_to ? issue.assigned_to === req.query.assigned_to : true) &&
+                        (req.query.status_text ? issue.status_text === req.query.status_text : true) &&
+                        (req.query.open ? String(issue.open) == req.query.open.toLowerCase() : true) &&
+                        (req.query.created_on ? new Date(issue.created_on).valueOf() == new Date(req.query.created_on).valueOf() : true) &&
+                        (req.query.updated_on ? new Date(issue.updated_on).valueOf() == new Date(req.query.updated_on).valueOf() : true);
+                });
+                return res.json({issues: issues});
+        })
     }
 
     public static update(req: express.Request, res: express.Response) {

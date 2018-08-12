@@ -25,11 +25,21 @@ describe("IssueController test", () => {
                 created_by: "INIT test 1",
                 issue_title: "INIT test 1",
                 issue_text: "INIT test 1",
+                assigned_to: "anybody",
+                created_on: new Date("2018-08-01T11:31:20").toISOString(),
+                updated_on: new Date("2018-08-01T11:31:20").toISOString(),
+                status_text: "in progress",
+                open: false,
             };
             const issue2 = {
                 created_by: "INIT test 2",
                 issue_title: "INIT test 2",
                 issue_text: "INIT test 2",
+                assigned_to: "anybody",
+                created_on: new Date("2018-03-01T11:31:20").toISOString(),
+                updated_on: new Date("2018-03-01T11:31:20").toISOString(),
+                status_text: "done",
+                open: false,
             };
             const issue3 = {
                 created_by: "INIT test 3",
@@ -38,6 +48,7 @@ describe("IssueController test", () => {
             };
             project.issues.push(issue1, issue2, issue3);
             project.save((err: any) => {
+                if (err) console.log(err);
                 done();
             });
         });
@@ -148,8 +159,94 @@ describe("IssueController test", () => {
         });
     });
 
-    describe("Read test", () => {
+    describe("GET /api/issues/", () => {
+        describe(":projectname = willFindNoProject", () => {
+            it("should not found any projects", (done: any) => {
+                chai.request(server.app)
+                    .get("/api/issues/willFindNoProject")
+                    .end((err: any, res: any) => {
+                        expect(res).to.be.json;
+                        expect(res.body).to.have.property("message");
+                        assert.equal(res.body.message, "unknown project");
+                        done();
+                    });
+            });
+        });
 
+        describe(":projectname = apitest", () => {
+            it("will list all issues related to 'apitest' project", (done: any) => {
+                chai.request(server.app)
+                    .get("/api/issues/apitest")
+                    .end((err: any, res: any) => {
+                        expect(res).to.be.json;
+                        expect(res.body).to.have.property("issues");
+                        expect(res.body.issues).to.be.an("array");
+                        expect(res.body.issues).to.have.length(3);
+                        done();
+                    });
+            });
+
+            it("will list 2 issues with open=false", (done: any) => {
+                chai.request(server.app)
+                    .get("/api/issues/apitest?open=false")
+                    .end((err: any, res: any) => {
+                        expect(res).to.be.json;
+                        expect(res.body).to.have.property("issues");
+                        expect(res.body.issues).to.be.an("array");
+                        expect(res.body.issues).to.have.length(2);
+                        done();
+                    });
+            });
+
+            it("will list 2 issues with assigned_to=anybody", (done: any) => {
+                chai.request(server.app)
+                    .get("/api/issues/apitest?assigned_to=anybody")
+                    .end((err: any, res: any) => {
+                        expect(res).to.be.json;
+                        expect(res.body).to.have.property("issues");
+                        expect(res.body.issues).to.be.an("array");
+                        expect(res.body.issues).to.have.length(2);
+                        done();
+                    });
+            });
+
+            it("will list 1 issue with issue_title=INIT test 1", (done: any) => {
+                chai.request(server.app)
+                    .get("/api/issues/apitest?created_by=INIT test 1")
+                    .end((err: any, res: any) => {
+                        expect(res).to.be.json;
+                        expect(res.body).to.have.property("issues");
+                        expect(res.body.issues).to.be.an("array");
+                        expect(res.body.issues).to.have.length(1);
+                        done();
+                    });
+            });
+
+            it("will list 1 issue with issue_text=INIT test 1", (done: any) => {
+                chai.request(server.app)
+                    .get("/api/issues/apitest?issue_text=INIT test 1")
+                    .end((err: any, res: any) => {
+                        expect(res).to.be.json;
+                        expect(res.body).to.have.property("issues");
+                        expect(res.body.issues).to.be.an("array");
+                        expect(res.body.issues).to.have.length(1);
+                        done();
+                    });
+            });
+
+            it("will list 1 issue with status_text=done", (done: any) => {
+                chai.request(server.app)
+                    .get("/api/issues/apitest?status_text=done")
+                    .end((err: any, res: any) => {
+                        expect(res).to.be.json;
+                        expect(res.body).to.have.property("issues");
+                        expect(res.body.issues).to.be.an("array");
+                        expect(res.body.issues).to.have.length(1);
+                        done();
+                    });
+            });
+
+        });
     });
 
     describe("PUT /api/issues", () => {
@@ -298,9 +395,9 @@ describe("IssueController test", () => {
             it("delete issue with given _id", (done: any) => {
                 Project.findOne({project_name: "apitest"}, (err: any, project: any) => {
                     const newIssue = {
-                        created_by: "test",
-                        issue_title: "test",
-                        issue_text: "test"
+                        created_by: "DELETE test",
+                        issue_title: "DELETE test",
+                        issue_text: "DELETE test"
                     };
                     project.issues.push(newIssue);
                     project.save((err: any, project: any) => {
