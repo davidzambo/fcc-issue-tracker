@@ -4,7 +4,24 @@ import * as mongoose  from "mongoose";
 import * as dotenv from "dotenv";
 
 dotenv.config();
-mongoose.connect(process.env.DB_ADDRESS, {useNewUrlParser: true});
+
+
+let DB_ADDRESS: string;
+switch (process.env.NODE_ENV) {
+    case 'test':
+        DB_ADDRESS = process.env.DB_ADDRESS_TEST;
+        break;
+    case 'production':
+        DB_ADDRESS = process.env.DB_ADDRESS_PROD;
+        break;
+    case 'development':
+        DB_ADDRESS = process.env.DB_ADDRESS_DEV;
+        break;
+    default:
+        DB_ADDRESS = process.env.DB_ADDRESS_DEV;
+}
+console.log(DB_ADDRESS);
+mongoose.connect(DB_ADDRESS, {useNewUrlParser: true});
 
 const Project = mongoose.model("Project", projectSchema);
 
@@ -114,7 +131,8 @@ export class IssueController {
                     project.save((err: any) => {
                         if (err) return res.json({message: `could not update ${req.body._id}`});
                         return res.json({
-                            message: "successfully updated"
+                            message: "successfully updated",
+                            issue
                         });
                     });
             });
@@ -136,7 +154,7 @@ export class IssueController {
 
             Project.findOne({
                 project_name: req.params.projectname,
-                "issue.id": _id
+                "issues._id": _id
             }, (err, project: any) => {
                 /*
                 * Handle unexisting issue._id
