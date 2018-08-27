@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro");
 html,
 body {
-  height: 100vh;
-  min-height: 100vh;
   font-family: "Source Sans Pro", sans-serif;
   letter-spacing: -1px; }
 
@@ -10,8 +8,17 @@ a:visited, a:active, a:link {
   text-decoration: none;
   color: white; }
 
+#description {
+  z-index: 20; }
+
 #project-description {
-  display: none; }
+  background-color: #343a40 !important;
+  height: 100%;
+  padding: 4rem 1rem;
+  opacity: 0; }
+
+#content {
+  margin-top: -400px; }
 
 textarea {
   resize: none;
