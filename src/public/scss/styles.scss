@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  @media (max-width: 768px) {
+    height: min-content;
+  }
+}
 html,
 body {
   font-family: "Source Sans Pro", sans-serif;
@@ -14,16 +23,15 @@ a {
   }
 }
 #description{
-  z-index: 20;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 #project-description {
   background-color: #343a40!important;
-  height: 100%;
-  padding: 4rem 1rem;
+  height: 0;
   opacity: 0;
 }
 #content {
-  margin-top: -400px;
 }
 textarea {
   resize: none;
@@ -32,6 +40,7 @@ textarea {
 footer {
   text-align: center;
   margin: 0 auto;
+  z-index: 10;
   img {
     height: 1.4rem;
     width: auto;

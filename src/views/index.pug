@@ -1,7 +1,7 @@
 extends templates/layout
 block content
-    div.row.justify-content-center
-        div.col-12.p-4.text-center
+    div.row.py-4.justify-content-center
+        div.col-12.p-2.py-md-4.text-center
             h1.d-inline.m-auto Issue Tracker
                 sup
                     i.fas.fa-info-circle.ml-2.text-info#description
@@ -23,8 +23,8 @@ block content
             code /api/convert?input=5.4/3lbs
             br
             code /api/convert?input=kg
-    div.row.px-md-4#content
-        div.col-12.col-md-4.col-lg-3
+    div.row.px-md-4.justify-content-center#content
+        div.col-12.col-md-4.col-lg-3.py-2.py-md-4
             div.card
                 h3.card-header Create new issue
                 form.form-horizontal.card-body(action="/api/issues/apitest" method="POST")
@@ -39,7 +39,7 @@ block content
                     div.form-group
                         input.form-control(type=text name="status_text" placeholder="(opt) Status text" rows="5")
                     button.btn.btn-outline-primary submit
-        div.col-12.col-md-4.col-lg-3
+        div.col-12.col-md-4.col-lg-3.py-2.py-md-4
             div.card
                 h3.card-header Update issue
                 form.form-horizontal.card-body(action="/api/issues/apitest" method="PUT")
@@ -60,7 +60,7 @@ block content
                             option(value="true") open
                             option(value="false") closed
                     button.btn.btn-outline-warning update
-        div.col-12.col-md-4.col-lg-3
+        div.col-12.col-md-4.col-lg-3.py-2.py-md-4
             div.card
                 h3.card-header Delete issue
                 form.form-horizontal.card-body(action="/api/issues/apitest" method="DELETE")
