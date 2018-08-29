@@ -31,6 +31,9 @@ a:visited, a:active, a:link {
   height: 0;
   opacity: 0; }
 
+#response {
+  color: #e83e8c; }
+
 textarea {
   resize: none;
   height: 10rem; }

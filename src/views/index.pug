@@ -16,13 +16,29 @@ block content
                 li I can GET /api/issues/{projectname} for an array of all issues on that specific project with all the information for each issue as was returned when posted.
                 li I can filter my get request by also passing along any field and value in the query(ie. /api/issues/{project}?open=false). I can pass along as many fields/values as I want.
             h3 Example usage
-            code /api/convert?input=4gal
+            code GET /api/issues/:projectname
             br
-            code /api/convert?input=1/2km
+            code GET /api/issues/apitest
             br
-            code /api/convert?input=5.4/3lbs
+            code GET /api/issues/apitest?issue_title=
             br
-            code /api/convert?input=kg
+            code GET /api/issues/apitest?issue_text=
+            br
+            code GET /api/issues/apitest?created_by=
+            br
+            code GET /api/issues/apitest?assigned_to=
+            br
+            code GET /api/issues/apitest?status_text=
+            br
+            code GET /api/issues/apitest?_id=
+            br
+            code GET /api/issues/apitest?open=
+            br
+            code POST /api/issues/apitest
+            br
+            code PUT /api/issues/apitest
+            br
+            code DELETE /api/issues/apitest
     div.row.px-md-4.justify-content-center#content
         div.col-12.col-md-4.col-lg-3.py-2.py-md-4
             div.card
@@ -38,7 +54,7 @@ block content
                         input.form-control(type=text name="assigned_to" placeholder="(opt) Assigned to" rows="5")
                     div.form-group
                         input.form-control(type=text name="status_text" placeholder="(opt) Status text" rows="5")
-                    button.btn.btn-outline-primary submit
+                    button.btn.btn-outline-success submit
         div.col-12.col-md-4.col-lg-3.py-2.py-md-4
             div.card
                 h3.card-header Update issue
@@ -67,13 +83,32 @@ block content
                     div.form-group
                         input.form-control(type=text name="_id" placeholder="Issue id*")
                     button.btn.btn-outline-danger delete
-
-
-    div.row.px-md-4#result
-        div.col-12
-            h3 API response:
-            p
-                code#response #{JSON.stringify(result)}
+        div.col-12.col-md-4.col-lg-3.py-2.py-md-4
+            div.card
+                h3.card-header Get issues
+                form.form-horizontal.card-body(action="/api/issues/apitest" method="GET")
+                    div.form-group
+                        input.form-control(type=text name="_id" placeholder="(opt) Issue id")
+                    div.form-group
+                        input.form-control(type=text name="issue_title" placeholder="(opt) Issue title")
+                    div.form-group
+                        textarea.form-control(name="issue_text" placeholder="(opt) Issue text")
+                    div.form-group
+                        input.form-control(type=text name="created_by" placeholder="(opt) Created by" rows="5")
+                    div.form-group
+                        input.form-control(type=text name="assigned_to" placeholder="(opt) Assigned to" rows="5")
+                    div.form-group
+                        input.form-control(type=text name="status_text" placeholder="(opt) Status text" rows="5")
+                    div.form-group
+                        select.form-control.custom-select(name="open")
+                            option(value="true") open
+                            option(value="false") closed
+                    button.btn.btn-outline-primary get
+    div.row.px-md-4.justify-content-center#result(style="display:none")
+            div.col-12
+                h3 API response:
+                pre
+                    code#response #{JSON.stringify(result)}
 block footer
     footer.row.bg-dark.text-white.p-3.mt-4
         a.col-12(href="https://www.dcmf.hu/" target="_blank") codedBy

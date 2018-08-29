@@ -31,32 +31,35 @@ IssueTracker.prototype.handleDescription = function(){
 
 IssueTracker.prototype.handleForm = function () {
     $('form').on('submit', function(e){
-        e.preventDefault();
         $('#response').empty();
         const formData = {};
         const method = $(this).attr('method');
-        $('form[method= ' + post + ']')
+
+        if (method !== 'GET') {
+            e.preventDefault();
+        }
+
+        $(this)
             .find('input, select, textarea')
             .map(function(){
-                formData[this.name] =  this.value;
+                formData[this.name] = this.value;
         });
 
         $.ajax({
             url: $(this).attr('action'),
-            type: $(this).attr('method'),
+            type: method,
             data: formData,
             cache: false,
             processData: true,
-            contentType: false,
             success: function(response){
-                $('#response').text(JSON.stringify(response));
-                // response.error.map(el => {
-                //     $('#response').append($('<p>').text(el));
-                // });
+                $('#response').text(JSON.stringify(response, null, 4));
                 $('#result').show();
+                $('html, body').animate({
+                    scrollTop: $('#result').offset().top
+                },200);
             },
             error: function(response) {
-                console.log(response);
+                alert(JSON.stringify(response));
             }
         });
     });
