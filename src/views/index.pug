@@ -15,6 +15,7 @@ block content
                 li I can DELETE /api/issues/{projectname} with a _id to completely delete an issue. If no _id is sent return '_id error', success: 'deleted '+_id, failed: 'could not delete '+_id.
                 li I can GET /api/issues/{projectname} for an array of all issues on that specific project with all the information for each issue as was returned when posted.
                 li I can filter my get request by also passing along any field and value in the query(ie. /api/issues/{project}?open=false). I can pass along as many fields/values as I want.
+        div.col-12.col-md-6
             h3 Example usage
             code GET /api/issues/:projectname
             br
@@ -39,6 +40,10 @@ block content
             code PUT /api/issues/apitest
             br
             code DELETE /api/issues/apitest
+        div.col-12.col-md-6
+            h3 Example response
+            pre
+                code #{JSON.stringify({"issue":{"assigned_to":"","status_text":"","open":true,"_id":"5b8788f103fb032296ceb254","issue_title":"freeCodeCamp","issue_text":"issue tracker testing","created_by":"DCMF","created_on":"2018-08-30T06:04:33.705Z","updated_on":"2018-08-30T06:04:33.705Z"}}, null, 4)}
     div.row.px-md-4.justify-content-center#content
         div.col-12.col-md-4.col-lg-3.py-2.py-md-4
             div.card

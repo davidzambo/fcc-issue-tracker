@@ -30,9 +30,11 @@ a:visited, a:active, a:link {
   background-color: #343a40 !important;
   height: 0;
   opacity: 0; }
+  #project-description h3 {
+    margin-top: 2rem; }
 
-#response {
-  color: #e83e8c; }
+code {
+  color: #e83e8c !important; }
 
 textarea {
   resize: none;

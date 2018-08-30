@@ -42,7 +42,10 @@ IssueTracker.prototype.handleForm = function () {
         $(this)
             .find('input, select, textarea')
             .map(function(){
-                formData[this.name] = this.value;
+                if (this.value) {
+                    console.log(this.name);
+                    formData[this.name] = this.value;
+                }
         });
 
         $.ajax({
