@@ -30,6 +30,7 @@ IssueTracker.prototype.handleDescription = function(){
 };
 
 IssueTracker.prototype.handleForm = function () {
+    const self = this;
     $('form').on('submit', function(e){
         $('#response').empty();
         const formData = {};
@@ -43,7 +44,6 @@ IssueTracker.prototype.handleForm = function () {
             .find('input, select, textarea')
             .map(function(){
                 if (this.value) {
-                    console.log(this.name);
                     formData[this.name] = this.value;
                 }
         });

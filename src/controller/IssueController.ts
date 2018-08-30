@@ -1,5 +1,6 @@
 import * as express from "express";
 import { projectSchema } from "../model/Project";
+import { Shield } from "../lib/Shield";
 import * as mongoose  from "mongoose";
 import * as dotenv from "dotenv";
 
@@ -44,9 +45,10 @@ export class IssueController {
             if (!project) return res.json({
                 message: "Unknown project!"
             });
+            const shield = new Shield();
+            const input = shield.sanitizeInput(req.body);
 
-
-            project.issues.push(req.body);
+            project.issues.push(input);
             project.save((error: any) => {
                 if (error) {
                     let errors: any = [];
@@ -135,13 +137,14 @@ export class IssueController {
                         assigned_to,
                         status_text,
                         open} = req.body;
+                    const shield = new Shield();
 
-                    if (issue_title) issue.issue_title = issue_title;
-                    if (issue_text) issue.issue_text = issue_text;
-                    if (created_by) issue.created_by = created_by;
-                    if (assigned_to) issue.assigned_to = assigned_to;
-                    if (status_text) issue.status_text = status_text;
-                    if (open) issue.open = open;
+                    if (issue_title) issue.issue_title = shield.sanitizer(issue_title);
+                    if (issue_text) issue.issue_text = shield.sanitizer(issue_text);
+                    if (created_by) issue.created_by = shield.sanitizer(created_by);
+                    if (assigned_to) issue.assigned_to = shield.sanitizer(assigned_to);
+                    if (status_text) issue.status_text = shield.sanitizer(status_text);
+                    if (open) issue.open = shield.sanitizer(open);
                     issue.updated_on = new Date().toJSON();
 
 

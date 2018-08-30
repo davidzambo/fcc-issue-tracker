@@ -34,7 +34,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "pm2-dev start --env NODE_ENV=development src/index.ts",
-    "production": "yarn build && pm2-runtime ./src/index.ts",
+    "production": "yarn build && pm2-runtime ./dist/index.js",
+    "production-ts": "pm2-runtime ./src/index.ts",
     "test": "mocha -r ts-node/register --exit tests/*.ts"
   }
 }

@@ -18,9 +18,9 @@ export class Server implements ServerInterface {
     }
 
     public init() {
-        this.app.set("views", "./src/views");
+        this.app.set("views", "./views");
         this.app.set("view engine", "pug");
-        this.app.use(express.static("./src/public"));
+        this.app.use(express.static("./public"));
         this.app.use(bodyParser.json({limit: '50mb'}));
         this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true}));
         this.app.use(helmet());
