@@ -33,12 +33,13 @@ IssueTracker.prototype.handleForm = function () {
     const self = this;
     $('form').on('submit', function(e){
         $('#response').empty();
-        const formData = {};
         const method = $(this).attr('method');
-
-        if (method !== 'GET') {
-            e.preventDefault();
+        if (method === 'GET') {
+            return true;
         }
+        const formData = {};
+
+        e.preventDefault();
 
         $(this)
             .find('input, select, textarea')

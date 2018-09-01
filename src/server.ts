@@ -1,6 +1,7 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as helmet from "helmet";
+import * as moment from "moment";
 import { Router } from "./router/router";
 
 interface ServerInterface {
@@ -25,6 +26,7 @@ export class Server implements ServerInterface {
         this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true}));
         this.app.use(helmet());
         this.app.use(helmet.hidePoweredBy({setTo: "PHP 5.4"}));
+        this.app.locals.moment = moment;
 
         Router.initializePaths(this.app);
 
