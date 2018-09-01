@@ -186,6 +186,28 @@ describe("IssueController test", () => {
                     });
             });
 
+            it("will returns a json", (done: any) => {
+                chai.request(server.app)
+                    .get("/api/issues/apitest?")
+                    .end((err: any, res: any) => {
+                        expect(res).to.be.json;
+                        expect(res.body).to.have.property("issues");
+                        expect(res.body.issues).to.be.an("array");
+                        expect(res.body.issues).to.have.length(3);
+                        done();
+                    });
+            });
+
+            it("will returns a json", (done: any) => {
+                chai.request(server.app)
+                    .get("/api/issues/apitest?response_type=render")
+                    .end((err: any, res: any) => {
+                        expect(res).to.be.html;
+                        console.log(res);
+                        done();
+                    });
+            });
+
             it("will list 2 issues with open=false", (done: any) => {
                 chai.request(server.app)
                     .get("/api/issues/apitest?open=false")

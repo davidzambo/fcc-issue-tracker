@@ -67,6 +67,11 @@ block content
                             option(value="") any
                             option(value="true") open
                             option(value="false") closed
+                    div.form-group
+                        label.form-label response_type:
+                        select.form-control.custom-select(name="response_type")
+                            option(value="json") json
+                            option(value="render") render
                     button.btn.btn-outline-primary get
     div.row.px-md-4.justify-content-center#result(style="display:none")
             div.col-12

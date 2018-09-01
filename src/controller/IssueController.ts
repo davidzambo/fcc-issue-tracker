@@ -84,7 +84,10 @@ export class IssueController {
                         (req.query.created_on ? new Date(issue.created_on).valueOf() == new Date(req.query.created_on).valueOf() : true) &&
                         (req.query.updated_on ? new Date(issue.updated_on).valueOf() == new Date(req.query.updated_on).valueOf() : true);
                 });
-                return res.render('list', {issues});
+                if (req.query.response_type === 'render') {
+                    return res.render('list', {issues});
+                }
+                return res.json({issues});
         })
     }
 
