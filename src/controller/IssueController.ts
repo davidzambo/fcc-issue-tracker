@@ -18,7 +18,7 @@ switch (process.env.NODE_ENV) {
         DB_ADDRESS = process.env.DB_ADDRESS_DEV;
         break;
     default:
-        DB_ADDRESS = process.env.DB_ADDRESS_DEV;
+        DB_ADDRESS = process.env.DB_ADDRESS;
 }
 
 mongoose.connect(DB_ADDRESS, {useNewUrlParser: true});
@@ -27,68 +27,86 @@ const Project = mongoose.model("Project", projectSchema);
 
 export class IssueController {
     public static index(req: express.Request, res: express.Response) {
-        return res.render("index");
+        try {
+            return res.render("index");
+        } catch (e) {
+            return res.json({
+                error: e.message
+            })
+        }
     }
 
     public static create(req: express.Request, res: express.Response) {
-        /*
-        * Find the given project
-        * */
-        Project.findOne({project_name: req.params.projectname},
-            (err: any, project: any) => {
-            if (err) return console.error(err);
-
+        try {
             /*
-            * Handle "no project" case
+            * Find the given project
             * */
-            if (!project) return res.json({
-                message: "Unknown project!"
-            });
+            Project.findOne({project_name: req.params.projectname},
+                (err: any, project: any) => {
+                if (err) return console.error(err);
 
-            project.issues.push(req.body);
-            project.save((error: any) => {
-                if (error) {
-                    let errors: any = [];
-                    /*
-                    * Fetch all error messages and return it to the user
-                    */
-                    Object.keys(error.errors).forEach((key) => {
-                        errors.push(error.errors[key].message);
-                    });
-                    return res.json({error: errors});
-                }
                 /*
-                * Send back the last inserted issue
-                */
-                return res.json({issue: project.issues[project.issues.length - 1]});
+                * Handle "no project" case
+                * */
+                if (!project) return res.json({
+                    message: "Unknown project!"
+                });
+
+                project.issues.push(req.body);
+                project.save((error: any) => {
+                    if (error) {
+                        let errors: any = [];
+                        /*
+                        * Fetch all error messages and return it to the user
+                        */
+                        Object.keys(error.errors).forEach((key) => {
+                            errors.push(error.errors[key].message);
+                        });
+                        return res.json({error: errors});
+                    }
+                    /*
+                    * Send back the last inserted issue
+                    */
+                    return res.json({issue: project.issues[project.issues.length - 1]});
+                });
             });
-        });
+        } catch (e) {
+            return res.json({
+                error: e.message
+            })
+        }
     }
 
     public static read(req: express.Request, res: express.Response) {
-        Project.findOne({
-            project_name: req.params.projectname,
-        })
-            .then((project: any) => {
-                if (!project) return res.json({message: "unknown project"});
-                /**
-                 * Filter the result issues based on queries
-                 */
-                const issues = project.issues.filter((issue: any) => {
-                    return (req.query.created_by ? issue.created_by === req.query.created_by : true) &&
-                        (req.query.issue_title ? issue.issue_title === req.query.issue_title : true) &&
-                        (req.query.issue_text ? issue.issue_text === req.query.issue_text : true) &&
-                        (req.query.assigned_to ? issue.assigned_to === req.query.assigned_to : true) &&
-                        (req.query.status_text ? issue.status_text === req.query.status_text : true) &&
-                        (req.query.open ? String(issue.open) == req.query.open.toLowerCase() : true) &&
-                        (req.query.created_on ? new Date(issue.created_on).valueOf() == new Date(req.query.created_on).valueOf() : true) &&
-                        (req.query.updated_on ? new Date(issue.updated_on).valueOf() == new Date(req.query.updated_on).valueOf() : true);
-                });
-                if (req.query.response_type === 'render') {
-                    return res.render('list', {issues});
-                }
-                return res.json({issues});
-        })
+        try {
+            Project.findOne({
+                project_name: req.params.projectname,
+            })
+                .then((project: any) => {
+                    if (!project) return res.json({message: "unknown project"});
+                    /**
+                     * Filter the result issues based on queries
+                     */
+                    const issues = project.issues.filter((issue: any) => {
+                        return (req.query.created_by ? issue.created_by === req.query.created_by : true) &&
+                            (req.query.issue_title ? issue.issue_title === req.query.issue_title : true) &&
+                            (req.query.issue_text ? issue.issue_text === req.query.issue_text : true) &&
+                            (req.query.assigned_to ? issue.assigned_to === req.query.assigned_to : true) &&
+                            (req.query.status_text ? issue.status_text === req.query.status_text : true) &&
+                            (req.query.open ? String(issue.open) == req.query.open.toLowerCase() : true) &&
+                            (req.query.created_on ? new Date(issue.created_on).valueOf() == new Date(req.query.created_on).valueOf() : true) &&
+                            (req.query.updated_on ? new Date(issue.updated_on).valueOf() == new Date(req.query.updated_on).valueOf() : true);
+                    });
+                    if (req.query.response_type === 'render') {
+                        return res.render('list', {issues});
+                    }
+                    return res.json({issues});
+            });
+        } catch (e) {
+            return res.json({
+                error: e.message
+            });
+        }
     }
 
     public static update(req: express.Request, res: express.Response) {

@@ -7,11 +7,13 @@ block content
                     div.card-header
                         h3.card-title.mb-0 #{issue.issue_title}
                     div.card-body
+                        p.card-text _id: #{issue._id}
+                        p.card-text issue_title: #{issue.issue_title}
+                        p.card-text issue_text: #{issue.issue_text}
+                        p.card-text assigned_to: #{issue.assigned_to}
                         p.card-text created_by: #{issue.created_by}
                         p.card-text created_on: #{moment(issue.created_on).format('MM/DD/YYYY H:m')}
                         p.card-text updated_on: #{moment(issue.updated_on).format('MM/DD/YYYY HH:mm')}
-                        p.card-text assigned_to: #{issue.assigned_to}
-                        p.card-text issue_text: #{issue.issue_text}
                         p.card-subtitle  status: #{issue.status_text}
                             if issue.open
                                 i(class="ml-2 fas fa-lg fa-times-circle text-danger")
