@@ -10,7 +10,12 @@ chai.use(require("chai-http"));
 const expect = chai.expect;
 const assert = chai.assert;
 
-mongoose.connect(process.env.DB_ADDRESS_TEST, {useNewUrlParser: true});
+mongoose.connect(process.env.DB_ADDRESS_TEST, {useNewUrlParser: true}, err => {
+    if (err) {
+        console.log(`DB CONNECTION ERROR: ${err}`);
+    }
+    console.log(`Connected to ${process.env.DB_ADDRESS_TEST}`);
+});
 
 const Project = mongoose.model("Project", projectSchema);
 

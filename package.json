@@ -19,7 +19,7 @@
     "mongoose": "^5.2.5",
     "pm2": "^3.0.3",
     "pug": "^2.0.3",
-    "ts-node": "^7.0.0",
+    "ts-node": "^7.0.1",
     "typescript": "^2.9.2"
   },
   "devDependencies": {
@@ -34,9 +34,10 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "pm2-dev start --env NODE_ENV=development src/index.ts",
-    "production": "yarn build && pm2-runtime ./dist/index.js",
-    "production-ts": "pm2-runtime ./src/index.ts",
+    "dev": "./node_modules/.bin/pm2 start ecosystem.config.js --no-daemon",
+    "debug": "./node_modules/.bin/pm2 start ecosystem.config.js --no-daemon --env DEBUG=*",
+    "production": "yarn build && ./node_modules/.bin/pm2-runtime ./dist/index.js",
+    "production-ts": "./node_modules/.bin/pm2-runtime ./src/index.ts",
     "test": "mocha -r ts-node/register --exit tests/*.ts"
   }
 }

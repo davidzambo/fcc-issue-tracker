@@ -71,7 +71,4 @@ IssueTracker.prototype.handleForm = function () {
 
 $(document).ready(function(){
     window.issueTracker = new IssueTracker();
-
-
-
 });

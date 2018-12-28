@@ -5,7 +5,6 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-
 let DB_ADDRESS: string;
 switch (process.env.NODE_ENV) {
     case 'test':
@@ -21,7 +20,12 @@ switch (process.env.NODE_ENV) {
         DB_ADDRESS = process.env.DB_ADDRESS;
 }
 
-mongoose.connect(DB_ADDRESS, {useNewUrlParser: true});
+mongoose.connect(DB_ADDRESS, {useNewUrlParser: true}, (err) => {
+    if (err) {
+        console.log(`DB CONNECTION ERROR: ${err}`);
+    }
+    console.log(`Connected to ${DB_ADDRESS}`);
+});
 
 const Project = mongoose.model("Project", projectSchema);
 
@@ -52,6 +56,13 @@ export class IssueController {
                     message: "Unknown project!"
                 });
 
+                const existingProject = project.issues.filter((issue: any) => issue.issue_title == req.body.issue_title);
+
+                if (existingProject.length) {
+                    return res.json({
+                        error: "Issue already exists!"
+                    });
+                }
                 project.issues.push(req.body);
                 project.save((error: any) => {
                     if (error) {
@@ -202,7 +213,7 @@ export class IssueController {
                 * Delete issue
                 * Filter every issue which's _id is not the given _id
                 * */
-                project.issues = project.issues.filter((issue: any) => issue._id !== _id );
+                project.issues = project.issues.filter((issue: any) => !issue._id.equals(_id));
 
                 project.save((err: any) => {
                    if (err) return res.json({message: `could not update ${_id}`});

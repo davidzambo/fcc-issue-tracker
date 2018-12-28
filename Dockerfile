@@ -6,8 +6,8 @@ RUN yarn install
 COPY .  /app
 
 # will rewrite the default 3000 port
-ENV PORT 8010
+ENV PORT 3030
 
 CMD ["yarn", "run", "production"]
 
-EXPOSE 8010
+EXPOSE 3030
